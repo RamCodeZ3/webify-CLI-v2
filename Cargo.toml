@@ -4,8 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-image = "0.25"
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "ico"] }
 webp = "0.3"
 ico = "0.3"
 rayon = "1.10"
 clap = { version = "4", features = ["derive"] }
+thiserror = "1"
+colored = "2"

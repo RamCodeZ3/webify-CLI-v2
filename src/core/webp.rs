@@ -1,23 +1,38 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use colored::Colorize;
 use webp::Encoder;
 
-use crate::error::{AppError, AppResult};
+use crate::utils::error::{AppError, AppResult};
 
 const SUPPORTED_EXTENSIONS: &[&str] = &["jpg", "jpeg", "png"];
 
 const DEFAULT_QUALITY: f32 = 80.0;
 
-pub fn convert_path(path: &Path, keep_original: bool) -> AppResult<usize> {
+#[derive(Debug, Default)]
+pub struct ConversionReport {
+    pub succeeded: Vec<PathBuf>,
+    pub failed: Vec<(PathBuf, AppError)>,
+}
+
+impl ConversionReport {
+    pub fn converted_count(&self) -> usize {
+        self.succeeded.len()
+    }
+}
+
+pub fn convert_path(path: &Path, keep_original: bool) -> AppResult<ConversionReport> {
     if !path.exists() {
         return Err(AppError::PathNotFound(path.to_path_buf()));
     }
 
     if path.is_file() {
-        convert_single(path, keep_original)?;
-        return Ok(1);
+        let mut report = ConversionReport::default();
+        match convert_single(path, keep_original) {
+            Ok(output) => report.succeeded.push(output),
+            Err(err) => report.failed.push((path.to_path_buf(), err)),
+        }
+        return Ok(report);
     }
 
     let candidates = collect_images(path)?;
@@ -26,27 +41,18 @@ pub fn convert_path(path: &Path, keep_original: bool) -> AppResult<usize> {
         return Err(AppError::NoImagesFound(path.to_path_buf()));
     }
 
-    let mut converted = 0usize;
+    let mut report = ConversionReport::default();
 
     for entry in &candidates {
         match convert_single(entry, keep_original) {
-            Ok(output) => {
-                println!(
-                    "{} {}",
-                    "convertida a".green(),
-                    output.display().to_string().green().bold()
-                );
-                converted += 1;
-            }
-           Err(err) => {
-                eprintln!("{} {}", "error:".red().bold(), err.to_string().red());
-            }
+            Ok(output) => report.succeeded.push(output),
+
+            Err(err) => report.failed.push((entry.clone(), err)),
         }
     }
 
-    Ok(converted)
+    Ok(report)
 }
-
 
 fn collect_images(dir: &Path) -> AppResult<Vec<PathBuf>> {
     let mut files = Vec::new();
@@ -78,8 +84,7 @@ fn has_supported_extension(path: &Path) -> bool {
         .unwrap_or(false)
 }
 
-
-fn convert_single(path: &Path, keep_original: bool) -> AppResult<PathBuf> {
+pub fn convert_single(path: &Path, keep_original: bool) -> AppResult<PathBuf> {
     if !has_supported_extension(path) {
         return Err(AppError::InvalidExtension(path.to_path_buf()));
     }
