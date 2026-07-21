@@ -24,6 +24,15 @@ enum Commands {
         #[arg(short = 'k', long = "keep")]
         keep: bool,
     },
+    Favicon {
+        path: String,
+
+        #[arg(short = 'n', long = "name-app")]
+        name_app: String,
+
+        #[arg(short = 'd', long = "destination")]
+        destination: String
+    }
   }
 
 fn main() {
@@ -31,6 +40,7 @@ fn main() {
 
     let result = match &cli.command {
         Commands::Wc { path, keep } => commands::webp::run(path, *keep),
+        Commands::Favicon {path, name-app, destination} => commands::favicon::
     };
 
     if let Err(err) = result {
