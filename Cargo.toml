@@ -1,7 +1,11 @@
 [package]
-name = "webify-CLI-v2"
+name = "webify-cli"
 version = "0.1.0"
 edition = "2024"
+
+[[bin]]
+name = "webify"
+path = "src/main.rs"
 
 [dependencies]
 image = { version = "0.25", default-features = false, features = ["jpeg", "png", "ico"] }
