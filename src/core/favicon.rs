@@ -174,37 +174,37 @@ impl FaviconGenerator {
         let name = escape_json(&self.app_name);
 
         let manifest = format!(
-            r#"{{
-    "name": "{name}",
-    "short_name": "{name}",
-    "icons": [
-        {{
-            "src": "/favicon/web-app-manifest-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "maskable"
-        }},
-        {{
-            "src": "/favicon/web-app-manifest-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
-        }}
-    ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
-    "display": "standalone"
-}}
-"#
-        );
+            r##"{{
+        "name": "{name}",
+        "short_name": "{name}",
+        "icons": [
+            {{
+                "src": "/favicon/web-app-manifest-192x192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "maskable"
+            }},
+            {{
+                "src": "/favicon/web-app-manifest-512x512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }}
+        ],
+        "theme_color": "#ffffff",
+        "background_color": "#ffffff",
+        "display": "standalone"
+    }}
+    "##
+    );
 
-        let dest = self.output_dir.join("site.webmanifest");
-        fs::write(&dest, manifest).map_err(|source| AppError::Io {
-            path: dest.clone(),
-            source,
-        })?;
-        Ok(dest)
-    }
+    let dest = self.output_dir.join("site.webmanifest");
+    fs::write(&dest, manifest).map_err(|source| AppError::Io {
+        path: dest.clone(),
+        source,
+    })?;
+    Ok(dest)
+}
 }
 
 fn escape_json(input: &str) -> String {

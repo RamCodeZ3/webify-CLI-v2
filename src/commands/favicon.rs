@@ -6,11 +6,11 @@ use crate::core::favicon::FaviconGenerator;
 use crate::utils::error::AppResult;
 use crate::utils::path;
 
-pub fn run(input_path: &str, name_app: &str, destination: &str) -> AppResult<()> {
+pub fn run(input_path: &str, name_app: Option<&str>, destination: Option<&str>) -> AppResult<()> {
     let target = path::resolve(input_path)?;
 
-    let name_app = (!name_app.is_empty()).then(|| name_app.to_string());
-    let destination = (!destination.is_empty()).then(|| PathBuf::from(destination));
+    let name_app = name_app.map(str::to_string);
+    let destination = destination.map(PathBuf::from);
 
     let generator = FaviconGenerator::new(target, name_app, destination)?;
     let report = generator.generate_all();

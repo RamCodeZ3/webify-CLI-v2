@@ -9,5 +9,6 @@ webp = "0.3"
 ico = "0.3"
 rayon = "1.10"
 clap = { version = "4", features = ["derive"] }
-thiserror = "1"
+thiserror = "2"
 colored = "2"
+base64 = "0.22"
