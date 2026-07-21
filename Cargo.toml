@@ -1,6 +1,18 @@
 [package]
-name = "webify-CLI-v2"
+name = "webify-cli"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "webify"
+path = "src/main.rs"
+
 [dependencies]
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "ico"] }
+webp = "0.3"
+ico = "0.3"
+rayon = "1.10"
+clap = { version = "4", features = ["derive"] }
+thiserror = "2"
+colored = "2"
+base64 = "0.22"
